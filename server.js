@@ -12,19 +12,58 @@ app.get('/', (req, res) =>{
     res.render('index');
 });
 
-app.get('/board/list', (req, res) =>{
-    res.render('board_list', {
+app.get('/list', (req, res) =>{
+    res.render('list', {
         list:data,
     });
 });
 
-app.get('/board/write', (req, res) =>{
-    res.render('board_write');
+app.get('/write', (req, res) =>{
+    res.render('write');
 });
 
-app.post('/board/write', (req, res) =>{
+app.post('/write', (req, res) =>{
     let item = {...req.body};
-    res.render('board_write', {
-        list:data,
+    data.push(item);
+    res.redirect('/list');
+});
+
+app.get('view', (req, res) =>{
+    const index = req.query.index;
+    const view = data[index-1];
+    res.render('view', {
+        data:view,
+        index:index,
     });
+});
+
+app.post('/delete', (req, res) =>{
+    const index = req.body.index-1;
+    data.splice(index,1);
+    res.redirect('/list');
+});
+
+app.get('/update', (req, res) =>{
+    const index = req.query.index;
+    const view = data[index-1];
+    res.render('update', {
+        data:view,
+        index:index,
+    });
+});
+
+app.post('update', (req, res) =>{
+    const index = req.body.index;
+    const item = {
+        title:req.body.title,
+        username:req.body.username,
+        date:req.body.date,
+        main:req.body.main
+    };
+    data[index-1] = item;
+    res.redirect(`/view?index=${index}`);
+});
+
+app.listen(3000, () =>{
+    console.log('server start')
 });
